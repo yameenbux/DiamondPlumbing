@@ -129,7 +129,18 @@
     paint-order: stroke fill;
   }
 
-  /* Orange outline only — used for the service list, as on the van doors. */
+  /* Solid orange, as the service list is actually painted on the doors.
+     Used for the moving ticker: an outlined face has two edges to rasterise
+     per glyph, which ghosts badly once the strip is on a composited layer at
+     a fractional offset, and at this size a 1px stroke closes the counters. */
+  .livery-solid {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    color: var(--color-flame);
+    letter-spacing: 0.03em;
+  }
+
+  /* Orange outline. Static use only, and not below ~20px. */
   .livery-hollow {
     font-family: var(--font-display);
     text-transform: uppercase;
