@@ -48,6 +48,8 @@
   --primary-foreground: #0b0500;
   --secondary: var(--color-ink-raised);
   --secondary-foreground: var(--color-chrome);
+  --card: var(--color-ink-raised);
+  --card-foreground: var(--color-chrome);
   --muted: var(--color-ink-raised);
   --muted-foreground: var(--color-slate);
   --accent: var(--color-ink-raised);
@@ -66,6 +68,8 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
