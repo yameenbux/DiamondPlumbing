@@ -65,6 +65,32 @@ npm run typecheck
 Deploy `out/` to any static host — Netlify, Vercel, Cloudflare Pages, GitHub
 Pages, or a folder on existing hosting.
 
+## GitHub Pages
+
+`.github/workflows/deploy.yml` builds the site and publishes it on every push
+to `main`.
+
+**One-off setup:** repository *Settings → Pages → Source →* **GitHub Actions**.
+Without this, Pages publishes the repository source as-is — Next.js files with
+no `index.html` — and the URL shows nothing.
+
+Three things a Pages project site needs, all handled:
+
+- **Base path.** The site is served from `/DiamondPlumbing/`, not the domain
+  root, so every asset URL needs that prefix. The workflow derives it from the
+  repository name and passes it as `NEXT_PUBLIC_BASE_PATH`; `next.config.ts`
+  turns it into `basePath` and `assetPrefix`. It is empty locally.
+- **`.nojekyll`.** Pages runs Jekyll by default, and Jekyll deletes directories
+  beginning with an underscore — including Next's `_next/`. `public/.nojekyll`
+  turns it off.
+- **The manifest.** `app/manifest.ts` generates it so `start_url` and the icon
+  paths carry the base path too.
+
+**Moving to a custom domain** (e.g. `diamondplumbingbolton.co.uk`) puts the site
+at the root, so the base path must go: delete the *Work out the base path* step
+and the `NEXT_PUBLIC_BASE_PATH` env from the workflow, and add a `CNAME` file to
+`public/`.
+
 ## Checking it still works
 
 `scripts/qa.mjs` drives a real browser through both WhatsApp routes, the form
@@ -79,7 +105,17 @@ npx playwright install chromium
 node scripts/qa.mjs
 ```
 
-Run it after touching `lib/whatsapp.ts`, `lib/images.ts` or the form.
+To check it the way GitHub Pages actually serves it, under a sub-path:
+
+```bash
+NEXT_PUBLIC_BASE_PATH=/DiamondPlumbing npm run build
+mkdir -p site/DiamondPlumbing && cp -r out/. site/DiamondPlumbing/
+npx serve site -l 4321
+BASE_URL=http://localhost:4321/DiamondPlumbing/ node scripts/qa.mjs
+```
+
+Run it after touching `lib/whatsapp.ts`, `lib/images.ts`, the form, or anything
+to do with fonts or deployment paths.
 
 ## Structure
 
@@ -100,6 +136,7 @@ scripts/
   generate-icons.mjs  re-renders the PNG icons from public/icon.svg
   qa.mjs              end-to-end checks
 lib/
+  base-path.ts    where the site is served from
   business.ts     ← every value Diamond needs to change
   whatsapp.ts     message builder and the share handoff
   images.ts       in-browser photo resizing
@@ -121,6 +158,11 @@ Plex Mono for registration numbers and field labels.
   scroll reveals only hide things once a `js` class is on `<html>`.
 - `prefers-reduced-motion` is honoured — reveals resolve instantly rather than
   never.
+- The next/font variables live on `<html>`, not `<body>`. Tailwind's `@theme`
+  resolves `--font-display` at `:root`, and a `var()` chain that cannot resolve
+  there computes to empty and inherits down empty — which silently falls the
+  whole page back to the system font stack with no error and no 404. The QA
+  script asserts all three faces to stop that recurring.
 - The SVG `backdrop-filter` on the liquid-glass buttons is unsupported in
   Safari, so `components/ui/liquid-glass-button.tsx` carries a
   `-webkit-backdrop-filter` blur alongside it. That is the only change made to

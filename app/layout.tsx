@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next"
 import { Archivo_Black, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google"
 
 import "./globals.css"
+import { asset } from "@/lib/base-path"
 import { business, yearsTrading } from "@/lib/business"
 
 const display = Archivo_Black({
@@ -35,10 +36,10 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
   },
   formatDetection: { telephone: true },
-  manifest: "/manifest.webmanifest",
+  manifest: asset("/manifest.webmanifest"),
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+    icon: [{ url: asset("/icon.svg"), type: "image/svg+xml" }],
+    apple: [{ url: asset("/apple-touch-icon.png"), sizes: "180x180" }],
   },
   openGraph: {
     title: `${business.name}, ${business.town}`,
@@ -61,7 +62,14 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-GB">
+    // The font variables must land on :root, not <body>. Tailwind's @theme
+    // resolves --font-display against them at :root, and a var() chain that
+    // cannot resolve there computes to empty and inherits down empty —
+    // silently falling the whole page back to the system stack.
+    <html
+      lang="en-GB"
+      className={`${display.variable} ${body.variable} ${mono.variable}`}
+    >
       <head>
         {/* Runs before first paint: reveals stay hidden only where there is
             script to reveal them again. */}
@@ -71,9 +79,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body
-        className={`${display.variable} ${body.variable} ${mono.variable} antialiased`}
-      >
+      <body className="antialiased">
         {children}
       </body>
     </html>
