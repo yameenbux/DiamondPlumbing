@@ -19,8 +19,15 @@
  *   npx serve site -l 4321
  *   BASE_URL=http://localhost:4321/DiamondPlumbing/ node scripts/qa.mjs
  */
+import { readFileSync } from 'node:fs'
 import { chromium, devices } from 'playwright'
 import sharp from 'sharp'
+
+// Read the number straight out of the config rather than repeating it here,
+// so changing it in one place cannot silently fail the wrong assertion.
+const phoneE164 = readFileSync(new URL('../lib/business.ts', import.meta.url), 'utf8')
+  .match(/phoneE164:\s*"(\d+)"/)?.[1]
+if (!phoneE164) throw new Error('could not read phoneE164 from lib/business.ts')
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' })
 const mk = (r, g, bl) => sharp({ create: { width: 2400, height: 1800, channels: 3, background: { r, g, b: bl } } }).jpeg().toBuffer()
 const base = process.env.BASE_URL ?? 'http://localhost:4321/'
@@ -66,7 +73,8 @@ await p2.waitForTimeout(1200)
 await p2.getByRole('button', { name: /Send on WhatsApp/ }).click()
 await p2.waitForTimeout(500)
 const url = new URL(await p2.evaluate(() => window.__o))
-ok(url.origin + url.pathname === 'https://wa.me/447000000000', 'fallback opens the right wa.me number')
+ok(url.origin + url.pathname === `https://wa.me/${phoneE164}`,
+  `fallback opens the configured wa.me number (${phoneE164})`)
 ok(url.searchParams.get('text').includes('1 photo to follow.'), 'fallback does not claim photos are attached')
 
 /* --- Guards --- */
