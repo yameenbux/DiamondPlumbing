@@ -3,13 +3,16 @@ import { liveryServices } from "@/lib/business"
 /**
  * The service list runs across the van doors as one dot-separated line.
  * Reproduced here as a moving band so the page reads as the vehicle does.
+ *
+ * Solid orange, like the doors — not outlined. The outline is for the
+ * wordmark, and on a moving strip it ghosts.
  */
 export function ServiceTicker() {
   const run = (
     <span className="flex shrink-0 items-center">
       {liveryServices.map((service) => (
         <span key={service} className="flex items-center">
-          <span className="livery-hollow px-4 text-[13px] leading-none sm:text-base">
+          <span className="livery-solid px-4 text-[12px] leading-none sm:text-[15px]">
             {service}
           </span>
           <span aria-hidden className="text-flame/70 text-lg leading-none">
