@@ -1,9 +1,8 @@
 /**
  * Everything Diamond needs to change lives in this one file.
  *
- * ⚠️ BEFORE GOING LIVE: replace the four values marked TODO with the real
- * ones. The placeholders are deliberately invalid so the page cannot
- * accidentally dial or message a stranger.
+ * ⚠️ Two values are still marked TODO. The placeholders are deliberately
+ * wrong so the page cannot state a credential Diamond does not have.
  */
 export const business = {
   name: "Diamond Heating & Plumbing",
@@ -11,10 +10,11 @@ export const business = {
   tagline: "Heating & Plumbing Engineer",
   town: "Bolton",
 
-  // TODO: real number, UK national format for display.
-  phoneDisplay: "07000 000 000",
-  // TODO: same number, international, digits only — used by tel: and wa.me.
-  phoneE164: "447000000000",
+  phoneDisplay: "07896 160299",
+  // The same number in international form, digits only. UK mobiles drop the
+  // leading 0 and gain 44. Used by tel: links and by every wa.me link, so it
+  // must be the number WhatsApp is registered to.
+  phoneE164: "447896160299",
 
   // TODO: Gas Safe registration number, printed on his ID card.
   gasSafeNumber: "000000",

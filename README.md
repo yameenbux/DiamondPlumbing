@@ -10,21 +10,22 @@ Static export — a folder of files, no server, no database, no running costs.
 
 ## Before it goes live
 
-Four values in `lib/business.ts` are placeholders and **must be replaced**. They
-are deliberately invalid so the site cannot dial or message a stranger.
+The phone number is set: **07896 160299** (`447896160299` for `tel:` and
+WhatsApp links). Two values in `lib/business.ts` are still placeholders and
+**must be replaced**:
 
 | Field | What it is |
 | --- | --- |
-| `phoneDisplay` | The number as customers should read it, e.g. `01204 123456` |
-| `phoneE164` | The same number, international, digits only, e.g. `447700900123` — used by `tel:` and WhatsApp |
-| `gasSafeNumber` | The registration number from the Gas Safe ID card |
-| `email` | A real inbox |
+| `gasSafeNumber` | The registration number from the Gas Safe ID card. Currently `000000`, and the page invites customers to check it against his ID card at the door — so it is wrong in a way that undermines the exact claim it is making. |
+| `email` | A real inbox. `hello@diamondplumbingbolton.co.uk` does not exist, so mail sent to it bounces. |
 
 Also check in the same file: `tradingSince`, opening `hours`, the `coverage`
 list, and the `faultTypes` chips.
 
-`phoneE164` must be the number that WhatsApp Business is registered to. UK
-mobiles drop the leading `0` and gain `44`: `07700 900123` → `447700900123`.
+If the number ever changes, `phoneE164` must stay the one WhatsApp Business is
+registered to. UK mobiles drop the leading `0` and gain `44`:
+`07896 160299` → `447896160299`. `scripts/qa.mjs` reads it from this file, so
+the check follows the config rather than needing its own edit.
 
 ## How the photo handoff actually works
 
