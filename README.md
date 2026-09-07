@@ -126,6 +126,7 @@ app/
   page.tsx        section order
 components/
   hero.tsx            the van's rear door
+  van.tsx             the van, drawn in keyline — replace with a photo
   service-ticker.tsx  the livery service list, scrolling
   credentials.tsx     Gas Safe, City & Guilds, coverage
   ui/card.tsx         shadcn card primitive
@@ -142,6 +143,23 @@ lib/
   whatsapp.ts     message builder and the share handoff
   images.ts       in-browser photo resizing
 ```
+
+## Photography
+
+There is none, and that is the biggest thing still missing. `components/van.tsx`
+draws the van as a keyline illustration so the page says "plumber" before a word
+is read, but a drawing is a stand-in.
+
+What would actually earn its place, roughly in order of value:
+
+1. The real van, parked, shot side-on in daylight.
+2. Diamond at a job — hands on a boiler, reading a manometer, anything real.
+3. Finished work: a tidy boiler install, a new bathroom, a clean run of pipe.
+4. Before and after pairs. The most persuasive format in the trade.
+
+Phone photos are fine. Landscape, good light, no people's faces without their
+say-so. Do **not** substitute stock photography: customers recognise it, and it
+works against a page whose whole argument is "ask to see my Gas Safe card".
 
 ## Design
 
