@@ -1,3 +1,5 @@
+import { ClipboardCheck, CookingPot, Droplets, Flame } from "lucide-react"
+
 import { Reveal } from "@/components/reveal"
 
 /**
@@ -7,6 +9,7 @@ import { Reveal } from "@/components/reveal"
 const work = [
   {
     group: "Heating & hot water",
+    icon: Flame,
     items: [
       ["Boiler repair", "Fault finding, error codes, parts, same visit where I can"],
       ["Boiler installs", "Swaps and full system changes, quoted before I start"],
@@ -18,6 +21,7 @@ const work = [
   },
   {
     group: "Plumbing",
+    icon: Droplets,
     items: [
       ["Leaks", "Traced and fixed, from a dripping joint to a soaked ceiling"],
       ["Bathrooms", "Full fits, or just the bits you can't get to"],
@@ -27,6 +31,7 @@ const work = [
   },
   {
     group: "Gas appliances",
+    icon: CookingPot,
     items: [
       ["Cookers & hobs", "Disconnects, installs and safety checks"],
       ["Gas fires", "Servicing, repairs and removals"],
@@ -34,6 +39,7 @@ const work = [
   },
   {
     group: "Landlords",
+    icon: ClipboardCheck,
     items: [
       ["Gas safety certificates", "CP12 issued the same day, portfolios welcome"],
       ["Void property checks", "Between tenancies, keys collected if you prefer"],
@@ -53,7 +59,10 @@ export function Services() {
       <div className="mt-8 grid gap-x-12 gap-y-8 sm:grid-cols-2">
         {work.map((section, i) => (
           <Reveal key={section.group} delay={i * 0.06}>
-            <h3 className="text-flame font-mono text-[11px] tracking-[0.18em] uppercase">
+            <h3 className="text-flame flex items-center gap-2.5 font-mono text-[11px] tracking-[0.18em] uppercase">
+              <span className="border-flame/40 text-flame grid size-8 shrink-0 place-items-center rounded-lg border">
+                <section.icon className="size-4" aria-hidden />
+              </span>
               {section.group}
             </h3>
             <ul className="mt-4">
