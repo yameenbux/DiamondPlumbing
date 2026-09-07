@@ -1,0 +1,73 @@
+# Builds the site and publishes it to GitHub Pages.
+#
+# GitHub Pages serving "from a branch" would publish this repository as-is —
+# Next.js source, with no index.html — so nothing would render. This builds the
+# static export first and publishes that instead.
+#
+# One-off setup: repository Settings → Pages → Source → "GitHub Actions".
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deploy finish rather than cancelling it half-published.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # A project site is served from /<repo>/, so the build needs that prefix
+      # on every asset URL. Delete this step and the env below if the site
+      # moves to a custom domain at the root.
+      - name: Work out the base path
+        id: base
+        run: echo "path=/${GITHUB_REPOSITORY#*/}" >> "$GITHUB_OUTPUT"
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.base.outputs.path }}
+
+      # Belt and braces: public/.nojekyll should already be here, but without
+      # it Jekyll silently deletes _next/ and the site loads unstyled.
+      - name: Make sure Jekyll stays out of the way
+        run: touch out/.nojekyll
+
+      - name: Fail if the build produced no page
+        run: test -f out/index.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

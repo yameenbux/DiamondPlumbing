@@ -3,18 +3,27 @@
  * handoff on both routes, the form guards, reduced motion, and layout at four
  * widths.
  *
- *   npm run build
- *   npx serve out -l 4321          (or any static server on port 4321)
+ * Playwright and sharp are not project dependencies — install them ad hoc:
+ *
+ *   npm install --no-save playwright sharp
  *   npx playwright install chromium
+ *   npm run build
+ *   npx serve out -l 4321
  *   node scripts/qa.mjs
  *
- * Playwright and sharp are not project dependencies — install them ad hoc:
- *   npm install --no-save playwright sharp
+ * BASE_URL points it elsewhere. Use it to check a sub-path deploy, which is
+ * how the site is served on GitHub Pages:
+ *
+ *   NEXT_PUBLIC_BASE_PATH=/DiamondPlumbing npm run build
+ *   mkdir -p site/DiamondPlumbing && cp -r out/. site/DiamondPlumbing/
+ *   npx serve site -l 4321
+ *   BASE_URL=http://localhost:4321/DiamondPlumbing/ node scripts/qa.mjs
  */
 import { chromium, devices } from 'playwright'
 import sharp from 'sharp'
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' })
 const mk = (r, g, bl) => sharp({ create: { width: 2400, height: 1800, channels: 3, background: { r, g, b: bl } } }).jpeg().toBuffer()
+const base = process.env.BASE_URL ?? 'http://localhost:4321/'
 const fail = []
 const ok = (c, m) => { console.log((c ? '  PASS  ' : '  FAIL  ') + m); if (!c) fail.push(m) }
 
@@ -27,7 +36,7 @@ await p1.addInitScript(() => {
   navigator.canShare = d => !!d?.files?.length
   navigator.share = async d => { window.__shared = { text: d.text, n: d.files.length } }
 })
-await p1.goto('http://localhost:4321/', { waitUntil: 'networkidle' })
+await p1.goto(base, { waitUntil: 'networkidle' })
 await p1.addStyleTag({ content: 'html{scroll-behavior:auto!important}' })
 await p1.evaluate(() => document.querySelector('#job').scrollIntoView())
 await p1.fill('#job-name', 'Jane Whittaker'); await p1.fill('#job-phone', '07700 900123'); await p1.fill('#job-postcode', 'bl1 4ab')
@@ -49,7 +58,7 @@ ok(errs.length === 0, 'no page errors (' + errs.join('; ') + ')')
 /* --- Desktop: wa.me fallback --- */
 const p2 = await (await b.newContext({ ...devices['Desktop Chrome'] })).newPage()
 await p2.addInitScript(() => { navigator.canShare = () => false; window.open = u => { window.__o = u } })
-await p2.goto('http://localhost:4321/', { waitUntil: 'networkidle' })
+await p2.goto(base, { waitUntil: 'networkidle' })
 await p2.evaluate(() => document.querySelector('#job').scrollIntoView())
 await p2.fill('#job-name', 'Sam Ali'); await p2.fill('#job-phone', '01204 123456')
 await p2.setInputFiles('input[type=file]', [{ name: 'a.jpg', mimeType: 'image/jpeg', buffer: await mk(10, 10, 10) }])
@@ -63,7 +72,7 @@ ok(url.searchParams.get('text').includes('1 photo to follow.'), 'fallback does n
 /* --- Guards --- */
 const p3 = await (await b.newContext({ ...devices['iPhone 14 Pro'] })).newPage()
 await p3.addInitScript(() => { window.open = () => { window.__o = true }; navigator.canShare = () => false })
-await p3.goto('http://localhost:4321/', { waitUntil: 'networkidle' })
+await p3.goto(base, { waitUntil: 'networkidle' })
 await p3.evaluate(() => document.querySelector('#job').scrollIntoView())
 await p3.getByRole('button', { name: /Send on WhatsApp/ }).click()
 await p3.waitForTimeout(400)
@@ -72,23 +81,42 @@ ok((await p3.locator('#job .text-destructive').count()) === 2, 'empty form expla
 
 /* --- Reduced motion --- */
 const p4 = await (await b.newContext({ ...devices['iPhone 14 Pro'], reducedMotion: 'reduce' })).newPage()
-await p4.goto('http://localhost:4321/', { waitUntil: 'networkidle' })
+await p4.goto(base, { waitUntil: 'networkidle' })
 await p4.evaluate(() => document.querySelector('#work').scrollIntoView())
 await p4.waitForTimeout(700)
 ok(0 === await p4.evaluate(() => [...document.querySelectorAll('[data-reveal]')].filter(e => getComputedStyle(e).opacity !== '1').length),
   'reduced motion leaves nothing invisible')
 
+/* --- Fonts ---
+   A var() chain that cannot resolve computes to empty and inherits down
+   empty, so a mistake here falls the whole page back to the system stack
+   without any error, any 404, or any visible break in a screenshot. */
+const p6 = await (await b.newContext({ ...devices['iPhone 14 Pro'] })).newPage()
+await p6.goto(base, { waitUntil: 'networkidle' })
+await p6.waitForTimeout(1200)
+const fonts = await p6.evaluate(() => {
+  const f = el => el ? getComputedStyle(el).fontFamily.split(',')[0].replace(/"/g, '') : ''
+  return {
+    body: f(document.body),
+    livery: f(document.querySelector('.livery')),
+    mono: f(document.querySelector('.font-mono')),
+  }
+})
+ok(fonts.livery === 'Archivo Black', `livery is Archivo Black (got ${fonts.livery})`)
+ok(fonts.body === 'IBM Plex Sans', `body is IBM Plex Sans (got ${fonts.body})`)
+ok(fonts.mono === 'IBM Plex Mono', `labels are IBM Plex Mono (got ${fonts.mono})`)
+
 /* --- Layout --- */
 for (const [w, h, label] of [[320, 640, '320px'], [393, 852, 'iPhone'], [1280, 800, 'desktop'], [1920, 1080, 'wide']]) {
   const pg = await (await b.newContext({ viewport: { width: w, height: h } })).newPage()
-  await pg.goto('http://localhost:4321/', { waitUntil: 'networkidle' })
+  await pg.goto(base, { waitUntil: 'networkidle' })
   await pg.waitForTimeout(500)
   ok(0 === await pg.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), `no sideways scroll at ${label}`)
 }
 
 /* --- Sticky bar --- */
 const p5 = await (await b.newContext({ ...devices['iPhone 14 Pro'] })).newPage()
-await p5.goto('http://localhost:4321/', { waitUntil: 'networkidle' })
+await p5.goto(base, { waitUntil: 'networkidle' })
 await p5.waitForTimeout(500)
 const vh = p5.viewportSize().height
 const top = await p5.locator('a[href^="tel:"]').filter({ hasText: 'Call' }).boundingBox()
