@@ -10,13 +10,12 @@ Static export — a folder of files, no server, no database, no running costs.
 
 ## Before it goes live
 
-The phone number is set: **07896 160299** (`447896160299` for `tel:` and
-WhatsApp links). Two values in `lib/business.ts` are still placeholders and
-**must be replaced**:
+Phone number and Gas Safe registration are set: **07896 160299**
+(`447896160299` for `tel:` and WhatsApp links) and **530690**. One value in
+`lib/business.ts` is still a placeholder and **must be replaced**:
 
 | Field | What it is |
 | --- | --- |
-| `gasSafeNumber` | The registration number from the Gas Safe ID card. Currently `000000`, and the page invites customers to check it against his ID card at the door — so it is wrong in a way that undermines the exact claim it is making. |
 | `email` | A real inbox. `hello@diamondplumbingbolton.co.uk` does not exist, so mail sent to it bounces. |
 
 Also check in the same file: `tradingSince`, opening `hours`, the `coverage`
@@ -129,6 +128,7 @@ components/
   hero.tsx            the van's rear door
   service-ticker.tsx  the livery service list, scrolling
   credentials.tsx     Gas Safe, City & Guilds, coverage
+  ui/card.tsx         shadcn card primitive
   job-form.tsx        the form
   action-bar.tsx      sticky Call / WhatsApp bar
   diamond-mark.tsx    the badge, redrawn as vector

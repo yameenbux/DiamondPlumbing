@@ -1,8 +1,7 @@
 /**
  * Everything Diamond needs to change lives in this one file.
  *
- * ⚠️ Two values are still marked TODO. The placeholders are deliberately
- * wrong so the page cannot state a credential Diamond does not have.
+ * ⚠️ `email` is still a placeholder and does not receive mail.
  */
 export const business = {
   name: "Diamond Heating & Plumbing",
@@ -16,8 +15,9 @@ export const business = {
   // must be the number WhatsApp is registered to.
   phoneE164: "447896160299",
 
-  // TODO: Gas Safe registration number, printed on his ID card.
-  gasSafeNumber: "000000",
+  // Printed on Diamond's Gas Safe ID card. The credentials section invites
+  // customers to check the card against this, so it has to stay correct.
+  gasSafeNumber: "530690",
 
   tradingSince: 2000,
 
