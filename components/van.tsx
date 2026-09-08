@@ -1,22 +1,26 @@
 import { cn } from "@/lib/utils"
 
 /**
- * Diamond's van, drawn as a side elevation in the same orange keyline the
- * rest of the site is built from.
+ * Diamond's van — a Mercedes Vito, drawn as a side elevation in the same
+ * orange keyline the rest of the site is built from.
  *
- * A photograph of the real van would be better and should replace this the
- * moment there is one worth using. Until then this does the job a photo
- * would: it says "plumber" before a word is read, and it says *this*
- * plumber, because the livery on the flank is the same lockup as the header.
- * Stock photography would say neither, and trades customers recognise it.
+ * The shapes that make it read as a Vito rather than a generic box van: a
+ * rounded nose that leans forward and drops away, a steeply raked screen, the
+ * tall tail lamp climbing the rear corner, a shoulder crease rising towards
+ * the back, and flattened rather than semicircular arches.
+ *
+ * A photograph of the real van would still be better and should replace this
+ * the moment there is one worth using. Stock photography would not — trades
+ * customers recognise it, and it works against a page that asks them to check
+ * a Gas Safe card at the door.
  */
 export function Van({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="45 96 890 268"
+      viewBox="52 92 890 284"
       className={cn("block w-full", className)}
       role="img"
-      aria-label="The Diamond Heating and Plumbing van"
+      aria-label="The Diamond Heating and Plumbing Mercedes Vito"
     >
       <defs>
         <linearGradient id="van-glass" x1="0" y1="0" x2="0" y2="1">
@@ -31,9 +35,9 @@ export function Van({ className }: { className?: string }) {
 
       <line
         x1="60"
-        y1="342"
+        y1="346"
         x2="920"
-        y2="342"
+        y2="346"
         stroke="var(--color-ink-line)"
         strokeWidth="2"
       />
@@ -45,62 +49,64 @@ export function Van({ className }: { className?: string }) {
         strokeLinejoin="round"
         strokeLinecap="round"
       >
-        {/* Bodywork — short high nose, raked screen, long flank */}
+        {/* Bodywork. The nose is the tell: it curves forward off the screen
+            and drops away, where a Transit would be a flat blunt face. */}
         <path
-          d="M86 290 L78 254 L80 208 L172 198 L238 114 Q242 112 250 112
-             L910 112 Q928 112 928 130 L928 282 Q928 290 918 290 Z"
+          d="M250 112 L158 204
+             C140 212 116 218 102 232
+             C92 242 88 252 90 266
+             L94 290
+             L918 290 Q930 290 930 280
+             L930 132 Q930 112 912 112 Z"
           fill="url(#van-body)"
         />
 
-        {/* One glasshouse: windscreen running back into the cab door window */}
+        {/* Windscreen running back into the cab door glass */}
         <path
-          d="M186 194 L246 124 L406 124 L406 196 L186 194 Z"
+          d="M176 198 L258 128 L404 128 L404 196 L176 198 Z"
           fill="url(#van-glass)"
           strokeWidth="2.5"
         />
-        {/* A-pillar, dividing screen from door glass */}
-        <path d="M254 124 L246 194" strokeWidth="1.5" opacity="0.55" />
+        <path d="M266 128 L258 197" strokeWidth="1.5" opacity="0.55" />
 
         {/* Door shuts: cab, sliding door, rear */}
-        <path d="M416 118 L416 290" strokeWidth="2" opacity="0.65" />
-        <path d="M656 118 L656 290" strokeWidth="2" opacity="0.65" />
+        <path d="M416 120 L416 288" strokeWidth="2" opacity="0.65" />
+        <path d="M656 120 L656 288" strokeWidth="2" opacity="0.65" />
 
-        {/* Handles */}
-        <path d="M384 250 L404 250" strokeWidth="5" strokeLinecap="round" />
-        <path d="M624 250 L644 250" strokeWidth="5" strokeLinecap="round" />
+        {/* Handles, sitting just under the crease */}
+        <path d="M384 266 L404 265" strokeWidth="5" strokeLinecap="round" />
+        <path d="M624 262 L644 261" strokeWidth="5" strokeLinecap="round" />
 
-        {/* Wing mirror on its arm */}
-        <path d="M244 152 L226 146 L224 168 L242 172" strokeWidth="2.5" />
-        <path d="M244 158 L253 162" strokeWidth="2" opacity="0.7" />
-
-        {/* Wheel arches */}
-        <path d="M132 290 A 64 64 0 0 1 260 290" strokeWidth="2.5" />
-        <path d="M718 290 A 64 64 0 0 1 846 290" strokeWidth="2.5" />
+        {/* Flattened arches — a Vito's are squarer than a semicircle */}
+        <path d="M138 292 A 66 56 0 0 1 270 292" strokeWidth="2.5" />
+        <path d="M716 292 A 66 56 0 0 1 848 292" strokeWidth="2.5" />
       </g>
 
-      {/* Lamps */}
+      {/* Headlamp, swept back along the nose */}
       <path
-        d="M86 222 L116 218 L118 236 L88 240 Z"
+        d="M100 230 L132 222 L136 240 L104 248 Z"
         fill="var(--color-chrome)"
         fillOpacity="0.18"
         stroke="var(--color-flame)"
         strokeWidth="2"
         strokeLinejoin="round"
       />
+
+      {/* Tail lamp climbing the rear corner — the other Vito giveaway */}
       <rect
-        x="912"
-        y="180"
-        width="10"
-        height="42"
-        rx="3"
+        x="906"
+        y="134"
+        width="18"
+        height="94"
+        rx="6"
         fill="var(--color-flame)"
-        fillOpacity="0.3"
+        fillOpacity="0.28"
         stroke="var(--color-flame)"
         strokeWidth="2"
       />
 
       {/* Wheels */}
-      {[196, 782].map((cx) => (
+      {[204, 782].map((cx) => (
         <g key={cx}>
           <circle
             cx={cx}
@@ -123,7 +129,7 @@ export function Van({ className }: { className?: string }) {
       ))}
 
       {/* The livery, as it is painted on the flank */}
-      <g transform="translate(438 148) skewX(-7)">
+      <g transform="translate(438 142) skewX(-7)">
         <text
           x="0"
           y="44"
@@ -160,8 +166,8 @@ export function Van({ className }: { className?: string }) {
         </text>
       </g>
 
-      {/* Gas Safe plate high on the rear panel — the only yellow on the van */}
-      <g transform="translate(838 136)">
+      {/* Gas Safe plate on the rear panel — the only yellow on the van */}
+      <g transform="translate(800 150)">
         <rect width="70" height="28" rx="5" fill="var(--color-gas)" opacity="0.92" />
         <text
           x="35"
